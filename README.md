@@ -9,6 +9,6 @@ This repository consists of three main components:
 
 For more details, refer to the respective README files:  
 
-- [PMLM Pretraining](pmlm/README.md)  
+- [PMLM](pmlm/README.md)  
 - [μFormer](mu-former/README.md)  
 - [μSearch](mu-search/README.md)  
