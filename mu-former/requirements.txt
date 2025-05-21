@@ -16,5 +16,5 @@ pathlib2
 matplotlib
 sentencepiece
 boto3
-protobuf==3.19.0
+protobuf==3.19.5
 fair-esm
