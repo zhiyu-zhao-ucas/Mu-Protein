@@ -55,4 +55,4 @@ bash script/pretrain.sh
 
 ## Pretrained Model
 
-A pretrained model is publicly available on [figshare](https://doi.org/10.6084/m9.figshare.26892355).
+A pretrained model is available in the `pretrained` folder.
