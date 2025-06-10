@@ -131,7 +131,7 @@ PyTorch, Fairseq
 ```bibtex
 @article{he2023muprotein,
   title={Accelerating Protein Engineering with Fitness Landscape Modeling and Reinforcement Learning},
-  author={He, Liang et al.},
+  author={Sun, Haoran and He, Liang and Deng, Pan and Liu, Guoqing and others},
   journal={bioRxiv},
   year={2023},
 }
@@ -139,6 +139,7 @@ PyTorch, Fairseq
 
 ## Model Card Contact
 
-Liang He ([liang.he@microsoft.com](mailto:liang.he@microsoft.com))
+Liang He ([liang.he@microsoft.com](mailto:liang.he@microsoft.com)),
+Pan Deng ([pan.deng@microsoft.com](mailto:pan.deng@microsoft.com)),
 Guoqing Liu ([guoqingliu@microsoft.com](mailto:guoqingliu@microsoft.com))
 
