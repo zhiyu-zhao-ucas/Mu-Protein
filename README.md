@@ -1,3 +1,9 @@
+ <!-- ![Repo Logo](docs/logo.png) -->
+
+ <p align="left">
+  <img src="docs/logo-small.png" alt="Repo Logo" width="300">
+</p>
+
 # Introduction 
 The repository primarily hosts the code for μProtein, or Mu-Protein, uProtein, MuProtein for readability, a potent tool tailored for predicting the effects of protein mutations and navigating the fitness landscape. It is configured to facilitate the replication of the models presented in the paper titled *Accelerating protein engineering with fitness landscape modeling and reinforcement learning* which can be accessed at [this link](https://www.biorxiv.org/content/10.1101/2023.11.16.565910v5).
 
