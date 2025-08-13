@@ -1,7 +1,7 @@
  <!-- ![Repo Logo](docs/logo.png) -->
 
- <p align="left">
-  <img src="docs/logo-small.png" alt="Repo Logo" width="300">
+ <p align="center">
+  <img src="docs/logo-small.png" alt="Repo Logo" width="500">
 </p>
 
 # Introduction 
