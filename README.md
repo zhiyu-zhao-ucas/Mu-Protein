@@ -5,17 +5,46 @@
 </p>
 
 # Introduction 
-The repository primarily hosts the code for μProtein, or Mu-Protein, uProtein, MuProtein for readability, a potent tool tailored for predicting the effects of protein mutations and navigating the fitness landscape. It is configured to facilitate the replication of the models presented in the paper titled *Accelerating protein engineering with fitness landscape modeling and reinforcement learning* which can be accessed at [this link](https://www.biorxiv.org/content/10.1101/2023.11.16.565910v5).
+μProtein is a general framework designed to protein engineering by integrating μFormer, a deep learning model for accurate mutational effect prediction, with μSearch, a reinforcement learning algorithm tailored for efficient navigation of the protein fitness landscape. Paper link: https://www.nature.com/articles/s42256-025-01103-w#Ack1
 
-This repository consists of three main components and a checkpoint folder:  
+For more details, refer to our [paper in Nature Machine Intelligence](https://www.nature.com/articles/s42256-025-01103-w#Ack1).
+
+This repository contains the following components:
 
 - **`pmlm/`** – Protein language model pretraining  
 - **`mu-former/`** – Fitness landscape modeling using the pretrained protein language model  
 - **`mu-search/`** – Navigating the constructed fitness landscape oracle
-- **`pretrained/`** – The pretrained PMLM model checkpoint (LFS)
+- **`pretrained/`** – Pretrained PMLM model checkpoint (stored using Git LFS).
 
 For more details, refer to the respective README files:  
 
 - [PMLM Pretraining](pmlm/README.md)  
 - [μFormer](mu-former/README.md)  
 - [μSearch](mu-search/README.md)  
+
+## Citation
+If you are using our code or model, please cite the following paper:
+
+```bibtex
+@article{sun2025accelerating,
+  title={Accelerating protein engineering with fitness landscape modelling and reinforcement learning},
+  author={Sun, Haoran and He, Liang and Deng, Pan and Liu, Guoqing and Zhao, Zhiyu and Jiang, Yuliang and Cao, Chuan and Ju, Fusong and Wu, Lijun and Liu, Haiguang and others},
+  journal={Nature Machine Intelligence},
+  pages={1--15},
+  year={2025},
+  publisher={Nature Publishing Group UK London}
+}
+```
+
+## License
+
+This repository is licensed under the [MIT License](LICENSE).  
+Feel free to use, modify, and distribute the code as per the license terms.
+
+---
+
+## Contact
+
+For questions or collaborations, please contact the authors via email or open an issue in this repository.
+
+---
