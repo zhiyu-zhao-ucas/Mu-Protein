@@ -5,9 +5,9 @@
 </p>
 
 # Introduction 
-μProtein is a general framework designed to protein engineering by integrating μFormer, a deep learning model for accurate mutational effect prediction, with μSearch, a reinforcement learning algorithm tailored for efficient navigation of the protein fitness landscape. Paper link: https://www.nature.com/articles/s42256-025-01103-w#Ack1
+μProtein is a general framework designed to accelerate  protein engineering by integrating μFormer, a deep learning model for accurate mutational effect prediction, with μSearch, a reinforcement learning algorithm tailored for efficient navigation of the protein fitness landscape.
 
-For more details, refer to our [paper in Nature Machine Intelligence](https://www.nature.com/articles/s42256-025-01103-w#Ack1).
+For more details, please refer to our [paper in Nature Machine Intelligence](https://www.nature.com/articles/s42256-025-01103-w#Ack1).
 
 This repository contains the following components:
 
@@ -18,9 +18,9 @@ This repository contains the following components:
 
 For more details, refer to the respective README files:  
 
-- [PMLM Pretraining](pmlm/README.md)  
 - [μFormer](mu-former/README.md)  
 - [μSearch](mu-search/README.md)  
+- [PMLM Pretraining](pmlm/README.md) 
 
 ## Citation
 If you are using our code or model, please cite the following paper:
@@ -39,7 +39,6 @@ If you are using our code or model, please cite the following paper:
 ## License
 
 This repository is licensed under the [MIT License](LICENSE).  
-Feel free to use, modify, and distribute the code as per the license terms.
 
 ---
 
