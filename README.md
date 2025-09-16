@@ -7,7 +7,7 @@
 # Introduction 
 μProtein is a general framework designed to accelerate  protein engineering by integrating μFormer, a deep learning model for accurate mutational effect prediction, with μSearch, a reinforcement learning algorithm tailored for efficient navigation of the protein fitness landscape.
 
-For more details, please refer to our [paper in Nature Machine Intelligence](https://www.nature.com/articles/s42256-025-01103-w#Ack1).
+For more details, please refer to our [paper in Nature Machine Intelligence](https://www.nature.com/articles/s42256-025-01103-w).
 
 This repository contains the following components:
 
