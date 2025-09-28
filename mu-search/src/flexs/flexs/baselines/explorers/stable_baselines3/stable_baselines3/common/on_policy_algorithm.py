@@ -212,12 +212,6 @@ class OnPolicyAlgorithm(BaseAlgorithm):
                 obs_tensor = obs_as_tensor(self._last_obs, self.device)
                 # print("obs_tensor shape", obs_tensor.shape)
                 if self.for_protein:
-                    # if env.envs[0].env.cur_mutations == 0:
-                    #     # I cannot use the initial_prior for the first step, because the initial_prior is designed for protein project
-                    #     sub_actions1, values, log_sub_action_1_probs = self.policy(obs_tensor, add_dirichlet_noise=add_dirichlet_noise, initial_prior=True)
-                    # else:
-                    #     sub_actions1, values, log_sub_action_1_probs = self.policy(obs_tensor, add_dirichlet_noise=add_dirichlet_noise)
-                    # TODO: I need to use the initial_prior for the first step
                     sub_actions1, values, log_sub_action_1_probs = self.policy(obs_tensor, add_dirichlet_noise=add_dirichlet_noise)
 
                     # print("sub_actions1 shape", sub_actions1.shape)  # sub_actions1 shape: [1, 1]

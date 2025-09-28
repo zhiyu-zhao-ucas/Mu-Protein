@@ -577,14 +577,6 @@ class ActorCriticPolicy(BasePolicy):
         self.optimizer = self.optimizer_class(self.parameters(), lr=lr_schedule(1), **self.optimizer_kwargs)
 
     def prior_initial_action(self, batch_size: int, seq_len: int) -> th.Tensor:
-        # 能不能用G236, E237, R162, E102, T261这五个作为seed呢，相当于第一个horizon的第一个action，备选位点有
-        # 20% G236
-        # 20% E237
-        # 20% R162
-        # 15% E102
-        # 10% T261
-        # 15% random
-
         initial_actions = []
         for i in range(batch_size):
             random_number = np.random.random()

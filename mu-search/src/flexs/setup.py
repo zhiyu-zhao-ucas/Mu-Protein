@@ -1,8 +1,5 @@
 import setuptools
 
-with open("README.md") as f:
-    long_description = f.read()
-
 setuptools.setup(
     name="flexs",
     version="0.2.1",
@@ -14,8 +11,6 @@ setuptools.setup(
     author="Stewart Slocum",
     author_email="slocumstewy@gmail.com",
     license="Apache 2.0",
-    long_description=long_description,
-    long_description_content_type="text/markdown",
     packages=setuptools.find_packages(),
     python_requires=">=3.5",
     install_requires=[
