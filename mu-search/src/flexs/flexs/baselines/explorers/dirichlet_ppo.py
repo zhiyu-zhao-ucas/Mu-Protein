@@ -54,33 +54,13 @@ class MuSearch(flexs.Explorer):
         exploration_candidate_pool, sampling_candidate_pool = rl_agent.learn(self.total_timesteps)
         print("Total sample sequence num: ", len(exploration_candidate_pool))
 
-        # For DEMO
-        # DEMO_FILE_PATHS = ["./demo_data.txt", "./sampling_demo_data.txt"]
-        # for DEMO_FILE_PATH, candidate_pool in zip(DEMO_FILE_PATHS, [exploration_candidate_pool, sampling_candidate_pool]):
-        #     demo_file = open(DEMO_FILE_PATH, "a")
-        #     avg_fitness_score_per_iter = []
-        #     start_idx = 0
-        #     while start_idx < len(candidate_pool):
-        #         fitness_scores_per_iter = [ score for _, score, _, _ in candidate_pool[start_idx:start_idx+self.num_trajs_per_update]]
-        #         avg_fitness_score_per_iter.append(np.mean(fitness_scores_per_iter))
-        #         start_idx += self.num_trajs_per_update
-        #         demo_file.write(" ".join([str(score) for score in fitness_scores_per_iter]) + "\n")
-        #     print("Iteration num: ", len(avg_fitness_score_per_iter))  # 30000 / 5 / 100 = 60
-        #     print(self.total_timesteps // self.horizon // self.num_trajs_per_update)
-        #     print("Average fitness score per iteration: ", avg_fitness_score_per_iter)
-        #     # assert len(avg_fitness_score_per_iter) == self.total_timesteps // self.horizon // self.num_trajs_per_update
-        #     demo_file.close()
-
         all_explored_sequences = {}
         filtered_sequences = {}
 
         for arr, score, embedding, ensemble_uncertainty in exploration_candidate_pool:
             candidate = example_env.array2str(arr)
             if score > self.score_threshold:
-                # TODO: Add a filter to remove sequences that are too similar to each other
-                # filtered_sequences[candidate] = [score, embedding, ensemble_uncertainty]
                 filtered_sequences[candidate] = score
-            # all_explored_sequences[candidate] = [score, embedding, ensemble_uncertainty]
             all_explored_sequences[candidate] = score
 
         print("Unique sequences num during training: ", len(all_explored_sequences))

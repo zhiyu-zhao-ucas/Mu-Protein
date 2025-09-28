@@ -111,7 +111,6 @@ fluorescence-model/
 cloud/runs/
 events.*
 *.rst
-*.csv
 logs/
 efficiency_trash
 efficiency
@@ -119,7 +118,6 @@ docs
 *.bin
 *.pdf
 *.png
-*.json
 paper_code
 .github
 examples/mean_plot.py

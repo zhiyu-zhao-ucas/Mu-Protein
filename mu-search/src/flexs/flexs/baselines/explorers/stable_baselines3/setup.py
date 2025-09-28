@@ -73,7 +73,7 @@ setup(
     packages=[package for package in find_packages() if package.startswith("stable_baselines3")],
     package_data={"stable_baselines3": ["py.typed", "version.txt"]},
     install_requires=[
-        "gym==0.21",  # Fixed version due to breaking changes in 0.22
+        # "gym",  # Fixed version due to breaking changes in 0.22
         "numpy",
         "torch>=1.11",
         # For saving models
@@ -151,8 +151,3 @@ setup(
         "Programming Language :: Python :: 3.9",
     ],
 )
-
-# python setup.py sdist
-# python setup.py bdist_wheel
-# twine upload --repository-url https://test.pypi.org/legacy/ dist/*
-# twine upload dist/*
