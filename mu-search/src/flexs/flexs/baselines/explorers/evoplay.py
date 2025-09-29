@@ -223,7 +223,6 @@ class TrainPipeline():
         state_batch = [data[0] for data in mini_batch]
         mcts_probs_batch = [data[1] for data in mini_batch]
         winner_batch = [data[2] for data in mini_batch]
-        # print(f"evoplay.py 219 state_batch len: {len(state_batch)}, mcts_probs_batch len: {len(mcts_probs_batch)}, winner_batch len: {len(winner_batch)}")
         old_probs, old_v = self.policy_value_net.policy_value(state_batch)
         for i in range(self.epochs):
             loss, entropy = self.policy_value_net.train_step(
@@ -273,36 +272,15 @@ class TrainPipeline():
         previous_cost = self.seq_env.model.cost
         for i in range(self.game_batch_num):
             if self.seq_env.model.cost - previous_cost > model_queries_per_batch:
-                # print(f"Exceeded model queries per batch: {model_queries_per_batch}")
                 break
-            # print(f"\033[93mevoplay.py 267 enter collect_selfplay_data, current i: {i}\033[0m")
             self.collect_selfplay_data(self.play_batch_size)
-            # print("batch i:{}, episode_len:{}".format(
-                    # i+1, self.episode_len))
-            # print(f"\033[93mevoplay.py 271 exit collect_selfplay_data, current i: {i}\033[0m")
-            # if self.retrain_flag and self.part<=10:
-            #     print('train predictor again')
-
-                # update_model = train_cnn_predictor(data_dir,self.part)
-                
-                # self.seq_env.model = update_model
-                # self.seq_env.model.eval()
-                # self.part = self.part+1
-                # self.retrain_flag = False
-            # print(f"\033[93mevoplay.py 281 self.m_p_dict.keys(): {len(self.m_p_dict.keys())}\033[0m")
             if len(self.m_p_dict.keys()) >= 4000:
                 m_p_fitness = np.array(list(self.m_p_dict.values()))
                 m_p_seqs = np.array(list(self.m_p_dict.keys()))
-                # df_m_p = pd.DataFrame(
-                #     {"sequence": m_p_seqs, "pred_fit": m_p_fitness})
-                # df_m_p.to_csv(r"/code/PAB1_GFP_task/evoplay_pab1_generated_sequence_1.csv",index=False)
                 endtime = datetime.datetime.now() 
                 print('time cost：',(endtime-starttime).seconds)
-                # sys.exit(0)
             if len(self.data_buffer) > self.batch_size and self.buffer_no_extend == False:
                 loss, entropy = self.policy_update()
-        # except KeyboardInterrupt:
-        #     print('\n\rquit')
 
 class Evoplay(flexs.Explorer):
     def __init__(self, start_seq, alphabet, model, trust_radius, args):
@@ -331,7 +309,6 @@ class Evoplay(flexs.Explorer):
         starting_sequence = input_sequences.sort_values(by="true_score", ascending=False).head(1).sequence.values[0]
         self.training_pipeline.change_start_seq(starting_sequence)
         self.training_pipeline.run(self.model_queries_per_batch)
-        # print(f"evoplay.py 324 self.training_pipeline.generated_seqs: {self.training_pipeline.generated_seqs}")
         # rank the sequences based on the predicted fitness
         ranked_idx = np.argsort(self.training_pipeline.fit_list)[::-1]
         ranked_seqs = [self.training_pipeline.generated_seqs[i] for i in ranked_idx[:self.sequences_batch_size]]

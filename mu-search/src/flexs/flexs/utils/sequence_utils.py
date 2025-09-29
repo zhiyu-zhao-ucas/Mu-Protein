@@ -44,7 +44,6 @@ def string_to_one_hot(sequence: str, alphabet: str) -> np.ndarray:
     """
     out = np.zeros((len(sequence), len(alphabet)))
     for i in range(len(sequence)):
-        # print(f"sequence[i]: {sequence[i]}, alphabet: {alphabet}")
         out[i, alphabet.index(sequence[i])] = 1
     return out
 
@@ -64,9 +63,7 @@ def one_hot_to_string(
         Sequence string representation of `one_hot`.
 
     """
-    # print(f"sequence_utils.py 66 one_hot: {one_hot}")
     residue_idxs = np.argmax(one_hot, axis=1)
-    # print(f"sequence_utils.py 67 residue_idxs: {residue_idxs}")
     return "".join([alphabet[idx] for idx in residue_idxs])
 
 

@@ -18,10 +18,6 @@ to_np = lambda x: x.cpu().detach().numpy()
 to_list = lambda x: to_np(x).tolist()
 
 
-def log_show(content):
-    print('\033[33m' + str(content) + '\033[0m')
-
-
 class Encoder(object):
     """convert between strings and their one-hot representations"""
     def __init__(self, alphabet: str = 'ARNDCQEGHILKMFPSTWYV'):
@@ -190,11 +186,7 @@ class GwgPairSampler(torch.nn.Module):
             nonlocal orig_delta_ij
             seq_len, num_tokens = orig_delta_ij.shape
             # Construct proposal distributions
-            # print(f"ggs.py line 192 delta_ij: {orig_delta_ij}")
-            # construct a numpy array from tensorflow.python.framework.ops.EagerTensor
-            # print(f"ggs.py line 195 orig_delta_ij: {orig_delta_ij}, {type(orig_delta_ij)}")
             delta_ij = torch.from_numpy(orig_delta_ij.numpy())  # Create local copy
-            # print(f"ggs.py line 197 delta_ij: {delta_ij}, {type(delta_ij)}")
             probs = torch.softmax(delta_ij.flatten() / self.temp, dim=-1)
             gwg_proposal = dists.OneHotCategorical(probs=probs)
             # gwg_proposal = dists.OneHotCategorical(logits = delta_ij.flatten() / self.temp)
@@ -235,10 +227,7 @@ class GwgPairSampler(torch.nn.Module):
         Returns:
             model_out: Predictor output scores
         """
-        # print(f"ggs.py line 226 seq: {seq}")
-        # input_one_hot = self._make_one_hot(seq)
         decoded_seq = self.predictor_tokenizer.decode(seq)
-        # print(f"ggs.py line 229 decoded_seq: {decoded_seq}")
         model_out = self.predictor.get_fitness(decoded_seq)
         model_out = torch.tensor(model_out).to(self.device)
         return model_out
@@ -372,7 +361,6 @@ class GwgPairSampler(torch.nn.Module):
 
             # Compute base score
             if self.landscape is not None:
-                # log_show(f"ggs.py line 352 real_seq: {[real_seq]}")
                 pred_score = self.landscape.get_fitness([real_seq])
             else:
                 pred_score = self._evaluate_one_hot(token_seq[None]).item()
@@ -485,12 +473,8 @@ class GWG(flexs.Explorer):
             all_outputs: results of GWG.
         """
         all_candidates, all_acceptance_rates = [], []
-        # for batch in inputs:
-        # log_show(f"ggs.py line 447 inputs: {inputs}")
         result = self.sampler(inputs)
-        print(f"ggs.py line 479 result: {result}")
         candidates, acceptance_rate = result
-        # log_show(f"ggs.py line 449 candidates: {candidates.columns}")
         # sort candidates by mutant_score
         self.cost += len(candidates)
         candidates = candidates.drop_duplicates(subset=['mutant_sequence'])
@@ -508,10 +492,6 @@ class GWG(flexs.Explorer):
             all_candidates: list of proposed sequences.
             all_acceptance_rates: list of acceptance rates.
         """
-        # pass
-        # log_show(f"ggs.py line 501 measured_sequences: {measured_sequences}")
-        # remove duplicates from measured_sequences
-        # previous_model_cost = self.model.cost
         measured_sequences = measured_sequences.drop_duplicates(subset=['sequence'])
         measured_sequences.reset_index(drop=True, inplace=True)
         all_candidates, all_scores_list = list(measured_sequences['sequence']), list(measured_sequences['model_score'])
@@ -525,17 +505,12 @@ class GWG(flexs.Explorer):
             new_scores = new_scores if isinstance(new_scores, (list, np.ndarray)) else [new_scores]
             for idx, score in zip(nan_indices, new_scores):
                 all_scores_list[idx] = score
-        # log_show(f"ggs.py line 502 measured_sequences: {measured_sequences}")
         previous_model_cost = self.sampler.cost
         for _ in range(self.rounds):
-            # log_show(f"ggs.py line 504: round: {_}")
-            # log_show(f"ggs.py line 462: all_candidates: {all_candidates}")
             if self.sampler.cost - previous_model_cost >= self.model_queries_per_batch:
                 print("Exceeded model queries per batch!")
                 break
             candidates, acceptance_rate = self._worker_fn(all_candidates)
-            # log_show(f"ggs.py line 465: candidates: {candidates}, len(candidates): {len(candidates)}")
-            # log_show(f"ggs.py line 465: candidates: {candidates}, len(candidates): {len(candidates)}")
             all_candidates.extend(list(candidates[0]["mutant_sequence"]))
             all_scores = candidates[0]["mutant_score"]
             all_scores_list.extend(list(all_scores))
@@ -553,8 +528,6 @@ class GWG(flexs.Explorer):
             concatenated_mols.reset_index(drop=True, inplace=True)
             all_candidates = concatenated_mols["sequence"].to_list()
             all_scores_list = concatenated_mols["model_score"].to_list()
-            # log_show(f"ggs.py line 523: all_candidates_len: {all_candidates}")
-            # log_show(f"ggs.py line 524: all_scores_list_len: {all_scores_list}")
         return all_candidates, all_scores_list
     
     def run(
@@ -612,12 +585,6 @@ class GWG(flexs.Explorer):
                     "Must propose <= `self.sequences_batch_size` sequences per round"
                 )
 
-            # log_show(f"ggs.py 571 sequences_data: {sequences_data}")
-            # log_show(f"ggs.py 572 seqs: {seqs}")
-            # log_show(f"ggs.py 573 preds: {preds}")
-            # log_show(f"ggs.py 574 true_score: {true_score}")
-            # log_show(f"ggs.py 575 model_cost: {len(self.sampler.cost)}")
-            # log_show(f"ggs.py 576 measurement_cost: {len(sequences_data) + len(seqs)}")
             sequences_data = sequences_data.append(
                 pd.DataFrame(
                     {

@@ -40,21 +40,14 @@ class Net(nn.Module):
         x = F.relu(self.conv2(x))
         x = F.relu(self.conv3(x))
         # action policy layers
-        # print(f"p_v_net_torch.py 43 x shape: {x.shape}")
         x_act = F.relu(self.act_conv1(x))
-        # print(f"p_v_net_torch.py 45 x_act shape: {x_act.shape}, board_width: {self.board_width}, board_height: {self.board_height}, 4*board_width*board_height: {4*self.board_width*self.board_height}")
         x_act = x_act.view(-1, 4*self.board_width*self.board_height)
         x_act = F.log_softmax(self.act_fc1(x_act), dim=1)
         # state value layers
-        # print(f"p_v_net_torch.py 48 x_act shape: {x_act.shape}")
         x_val = F.relu(self.val_conv1(x))
-        # print(f"p_v_net_torch.py 50 x_val shape: {x_val.shape}")
         x_val = x_val.view(-1, self.board_width*self.board_height)
-        # print(f"p_v_net_torch.py 52 x_val shape: {x_val.shape}")
         x_val = F.relu(self.val_fc1(x_val))
-        # print(f"p_v_net_torch.py 54 x_val shape: {x_val.shape}")
         x_val = torch.tanh(self.val_fc2(x_val))
-        # print(f"p_v_net_torch.py 56 x_val shape: {x_val.shape}")
         return x_act, x_val
 
 
@@ -137,7 +130,6 @@ class PolicyValueNet():
         current_state_0 = np.expand_dims(board.current_state(), axis = 0)
         current_state = np.ascontiguousarray(current_state_0)  ##
 
-        # print(f"p_v_net_torch.py 100 current_state: {current_state}")
         state_tensor = torch.from_numpy(current_state).float().to(self.device)
         with torch.no_grad():
             log_act_probs, value = self.policy_value_net(state_tensor)
@@ -161,9 +153,7 @@ class PolicyValueNet():
 
         # forward
         log_act_probs, value = self.policy_value_net(state_batch)
-        # print(f"p_v_net_torch.py 135 state_batch shape: {state_batch.shape}, value shape: {value.shape}, winner_batch shape: {winner_batch_tensor.shape}")
         value_loss = F.mse_loss(value.view(-1), winner_batch_tensor)
-        # print(f"p_v_net_torch.py 143 mcts_probs shape: {mcts_probs.shape}, log_act_probs shape: {log_act_probs.shape}")
         policy_loss = -torch.mean(torch.sum(mcts_probs*log_act_probs, 1))
         loss = value_loss + policy_loss
         # backward and optimize

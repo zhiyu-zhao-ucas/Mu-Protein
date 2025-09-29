@@ -3,16 +3,13 @@ import numpy as np
 import flexs
 import torch
 import torch.nn.functional as F
-import numpy as np
 
 def hamming_distance(seq_1, seq_2):
     return sum([x!=y for x, y in zip(seq_1, seq_2)])
 
 def random_mutation(sequence, alphabet, num_mutations):
     wt_seq = list(sequence)
-    # print(f"pex.py line 13 num_mutations: {num_mutations}")
     for _ in range(num_mutations):
-        # print(f"pex.py line 14 len(sequence): {len(sequence)}")
         idx = np.random.randint(len(sequence))
         wt_seq[idx] = alphabet[np.random.randint(len(alphabet))]
     new_seq = ''.join(wt_seq)
@@ -96,16 +93,7 @@ class ProximalExploration(flexs.Explorer):
         # Output: - query_batch:        [num_queries, sequence_length]
         #         - model_scores:       [num_queries]
         
-        # print("-----------------ProximalExploration-----------------")
-        # print(f"measured_sequences", measured_sequences)
-        # print("-----------------ProximalExploration-----------------")
         query_batch = self._propose_sequences(measured_sequences)
-        # assert len(query_batch) == 2, f"query_batch: {type(query_batch[0])}"
-        # print(f"query_batch: {query_batch[0]}")
-        # model_scores = np.concatenate([
-        #     self.model.get_fitness(query_batch[0][i:i+self.batch_size])
-        #     for i in range(0, len(query_batch[0]), self.batch_size)
-        # ])
         return query_batch[0], query_batch[1]
 
     def _propose_sequences(self, measured_sequences):
@@ -156,9 +144,7 @@ class ProximalExploration(flexs.Explorer):
         model_query_per_round = min(self.num_model_queries_per_round, 
                                    (len(self.alphabet) - 1) ** self.num_random_mutations * n_choose_k(len(random.choice(frontier_neighbors)['sequence']), self.num_random_mutations))
         while len(candidate_pool) < model_query_per_round:
-            print(len(candidate_pool))
             candidate_sequence = random_mutation(random.choice(frontier_neighbors)['sequence'], self.alphabet, self.num_random_mutations)
-            print(f"candidate_sequence in measured_sequence_set: {candidate_sequence in measured_sequence_set}")
             if candidate_sequence not in measured_sequence_set:
                 candidate_pool.append(candidate_sequence)
                 measured_sequence_set.add(candidate_sequence)
@@ -201,7 +187,4 @@ class ProximalExploration(flexs.Explorer):
                     query_batch.append(candidate_pool_dict[distance_to_wt][0]['sequence'])
                     candidate_pool_dict[distance_to_wt].pop(0)
                     scores.append(model_score)
-        print(f"query_batch: {query_batch}")
-        print(f"scores: {scores}")
-
         return query_batch, scores

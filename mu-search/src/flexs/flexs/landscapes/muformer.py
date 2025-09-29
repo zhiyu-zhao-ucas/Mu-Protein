@@ -164,10 +164,7 @@ class MuformerLandscape(flexs.Landscape):
         args.joint_method = getattr(args, 'joint_method', 'average')
 
         self.device = getattr(args, 'device', 'cuda')
-        self.muformer, self.lm_encoder = load_ckpt(args)
-        # print(dir(self.lm_encoder.tokenizer))
-        # print(self.lm_encoder.tokenizer.indices)
-        # print("sss: ", self.lm_encoder.encode([starting_sequence]))
+    self.muformer, self.lm_encoder = load_ckpt(args)
         self.muformer = self.muformer.to(self.device)
         print(f"Muformer model is loaded on the device: {self.device}")
         self.muformer.eval()
@@ -305,23 +302,9 @@ if __name__ == "__main__":
     #     min_label_value = min(min_label_value, score)
     #     dataset_size += 1
 
-    # print("dataset_size:", dataset_size)
-    # print("uncertainty mean:", np.mean(uncertainties))
-    # print("uncertainty max:", np.max(uncertainties))
-    # print("uncertainty min:", np.min(uncertainties))
-    # print("uncertainty median:", np.median(uncertainties))
-    # print("prediction std:", np.std(pred_scores))
-    # print("prediction mean:", np.mean(pred_scores))
     # # compute the spearman correlation between uncertainties and delta_scores
     # import scipy.stats
-    # print("spearman correlation:", scipy.stats.spearmanr(uncertainties, delta_scores))
 
-    # print("dataset_max_prediction_value:" + str(max_pred_value))
-    # print("dataset_max_prediction_mutant:" + str(max_pred_mutant))
-    # print("dataset_min_prediction_value:" + str(min_pred_value))
-    # print("max_label_value:" + str(max_label_value))
-    # print("max_label_mutant:" + str(max_label_mutant))
-    # print("min_label_value:" + str(min_label_value))
 
     # 3. Analyze some specific mutations.
     # muts = ['L79R;D113S;D129T;G236A', 'E56H;I93H;H110W;L137P;G236N', 'C121S;R162H;R238P;S254P']  # predict_mutation
@@ -338,7 +321,6 @@ if __name__ == "__main__":
     #         mutant, score = line.strip().split(" ")
     #         score = float(score)
     #         pred, embedding = landscape.predict_mutation(mutant)
-    #         # print("pred, score", pred, score)
     #     results.append([mutant, score, embedding])
     # # save results into npy file
     # np.save("horizon_3_high_score_mutants.npy", results)
@@ -346,7 +328,6 @@ if __name__ == "__main__":
     # RUN
     # starting_sequence = "MSIQHFRVALIPFFAAFCLPVFAHPETLVKVKDAEDQLGARVGYIELDLNSGKILESFRPEERFPMMSTFKVLLCGAVLSRVDAGQEQLGRRIHYSQNDLVEYSPVTEKHLTDGMTVRELCSAAITMSDNTAANLLLTTIGGPKELTAFLHNMGDHVTRLDRWEPELNEAIPNDERDTTMPAAMATTLRKLLTGELLTLASRQQLIDWMEADKVAGPLLRSALPAGWFIADKSGAGERGSRGIIAALGPDGKPSRIVVIYTTGSQATMDERNRQIAEIGASLIKHW"
     # fitness = landscape.get_fitness([starting_sequence], normalize=False)[0][0]    
-    # print(f'[Starting Sequence] {starting_sequence} \t= {fitness}')  # => [-1.0017444， -0.93]
 
     # 3CL protease, demo
     # protein_dict = {
@@ -409,16 +390,12 @@ if __name__ == "__main__":
     #         print(f"num_higher: {num_higher} / {random_mutants_num}")
             
     # WT_avg_fitness = landscape.get_fitness([starting_sequence])[0][0]
-    # print(f"WT fitness: {WT_avg_fitness}")
     # esbl_file_path = "/home/guoqingliu/DARWIN/RL/landscape/muformer/muformer_landscape/esbl_sequences.csv"
     # esbl_sequences = pd.read_csv("esbl_sequences.csv")["sequence"]
     # ESBL_fitness = landscape.get_fitness(esbl_sequences)[0]
     # ESBL_fitness_max = np.max(ESBL_fitness)
     # ESBL_fitness_min = np.min(ESBL_fitness)
     # ESBL_fitness_median = np.median(ESBL_fitness)
-    # print(f"Max of ESBL fitness: {ESBL_fitness_max}")
-    # print(f"Min of ESBL fitness: {ESBL_fitness_min}")
-    # print(f"Median of ESBL fitness: {ESBL_fitness_median}")
 
     # From xxx.txt to xxx.json (to include embedding)
     # file_path = "./horizon_5_ensemble3_1007_all_explored_sequences.txt"
@@ -432,7 +409,6 @@ if __name__ == "__main__":
     #         mutant, score = mutant_and_score
     #         score = float(score)
     #         pred, embedding, _ = landscape.predict_mutation(mutant)
-    #         # print(embedding.shape)
     #         # print("pred, score", pred, score)
     #         assert abs(score - pred) <= 0.01, [mutant, score, pred] 
     #         sorted_results.append([mutant, score, embedding])
