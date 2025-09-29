@@ -40,10 +40,8 @@ class TreeNode(object):
         action_priors: a list of tuples of actions and their prior probability
             according to the policy function.
         """
-        # print(f"mcts_alphaZero_mutate_expand_m_p_gfp.py 382 action_priors: {action_priors}")
         for action, prob in action_priors:
             if action not in self._children:
-                # print(f"mcts_alphaZero_mutate_expand_m_p_gfp.py 385 action: {action}, prob: {prob}")
                 self._children[action] = TreeNode(self, prob)
 
     def select(self, c_puct):
@@ -51,7 +49,6 @@ class TreeNode(object):
         plus bonus u(P).
         Return: A tuple of (action, next_node)
         """
-        # print(f"mcts_alphaZero_mutate_expand_m_p_gfp.py 393 self._children: {self._children}")
         return max(self._children.items(),
                    key=lambda act_node: act_node[1].get_value(c_puct))
 
@@ -113,7 +110,6 @@ class MCTS(object):
         state.playout_dict.update(mp_dict)
         while(1):
             if node.is_leaf():
-                # print(f"mcts_alphaZero_mutate_expand_m_p_gfp.py 108 node.is_leaf(): {node.is_leaf()}, state: {state}")
                 break
             # Greedily select next move.
             action, node = node.select(self._c_puct)
@@ -123,12 +119,10 @@ class MCTS(object):
             playout_fit.append(state._state_fitness)
 
         # for the current player.
-        # print(f"mcts_alphaZero_mutate_expand_m_p_gfp.py 122 state: {state}")
         action_probs, leaf_value = self._policy(state)
         # Check for end of game.
         end = state.mutation_end()
         if not end:
-            # print(f"mcts_alphaZero_mutate_expand_m_p_gfp.py 127 end: {end}, expand node")
             node.expand(action_probs)
         else:
             
@@ -149,9 +143,7 @@ class MCTS(object):
         play_fit_list = []
         g_m_p_dict = m_p_dict
         for n in range(self._n_playout):
-            # print(f"mcts_alphaZero_mutate_expand_m_p_gfp.py 146 state: {state}")
             state_copy = copy.deepcopy(state)
-            # print(f"mcts_alphaZero_mutate_expand_m_p_gfp.py 149 state_copy.move_count: {state_copy.move_count}, state.move_count: {state.move_count}")
             #debug
             state_copy.playout = 1
             t_0 = time.time()
@@ -166,7 +158,6 @@ class MCTS(object):
                       for act, node in self._root._children.items()]
 
         if not act_visits:
-            # print(f"mcts_alphaZero_mutate_expand_m_p_gfp.py 164 act_visits: {act_visits}")
             return [], [], [], [], []
         acts, visits = zip(*act_visits)
         act_probs = softmax(1.0/temp * np.log(np.array(visits) + 1e-10))
@@ -177,12 +168,10 @@ class MCTS(object):
         """Step forward in the tree, keeping everything we already know
         about the subtree.
         """
-        # print(f"mcts_alphaZero_mutate_expand_m_p_gfp.py 173 last_move: {last_move}, last_move in self._root._children: {last_move in self._root._children}")
         if last_move in self._root._children:
             self._root = self._root._children[last_move]
             self._root._parent = None
         else:
-            # print("mcts_alphaZero_mutate_expand_m_p_gfp.py 178 last_move not in self._root._children")
             self._root = TreeNode(None, 1.0)
 
     def __str__(self):
@@ -224,13 +213,11 @@ class MCTSMutater(object):
                 )
                 # update the root node and reuse the search tree
                 self.mcts.update_with_move(move)
-                # print(f"mcts_alphaZero_mutate_expand_m_p_gfp.py 218 policy move: {move}")
                 print("AI move: %d\n" % (move))
             else:
                 # with the default temp=1e-3, it is almost equivalent
                 # to choosing the move with the highest prob
                 move = np.random.choice(acts, p=probs)
-                # print(f"mcts_alphaZero_mutate_expand_m_p_gfp.py 225 random move: {move}")
                 # reset the root node
                 self.mcts.update_with_move(-1)
                 print("AI move: %d\n" % (move))

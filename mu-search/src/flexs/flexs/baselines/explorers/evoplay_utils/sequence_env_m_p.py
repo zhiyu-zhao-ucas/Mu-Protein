@@ -104,7 +104,6 @@ class Seq_env(object):
             inputs = inputs.permute(0, 2, 1)
 
             inputs_string = one_hot_to_string(self._state, self.alphabet)
-            # print("sequence_env_m_p.py 105 inputs_string: ", inputs_string)
             outputs = self.model.get_fitness([inputs_string])
 
             outputs = outputs.squeeze()
@@ -245,12 +244,10 @@ class Seq_env(object):
 
 
     def mutation_end(self):
-        # print(f"sequence_env_m_p.py 219 self.move_count: {self.move_count}, self.max_moves: {self.max_moves}, self.unuseful_move: {self.unuseful_move}, self._state_fitness: {self._state_fitness}, self.previous_fitness: {self.previous_fitness}, self.repeated_seq_ocurr: {self.repeated_seq_ocurr}")
         if self.repeated_seq_ocurr == True:
             return True
         #
         if self.move_count >= self.max_moves: 
-            # print(f"sequence_env_m_p.py 224 self.move_count: {self.move_count} >= self.max_moves: {self.max_moves}, return True")
             return True
         #
         if self.unuseful_move == 1:
@@ -265,13 +262,11 @@ class Seq_env(object):
         result = cls.__new__(cls)
         memo[id(self)] = result
         for key, value in self.__dict__.items():
-            # print(f"sequence_env_m_p.py 239 key: {key}")
             if key == 'model':
                 # Shallow copy the model (or assign a shared reference)
                 setattr(result, key, value)
             elif key == 'move_count':
                 setattr(result, key, copy.deepcopy(value))
-                # print(f"sequence_env_m_p.py 244 key: {key}, value: {value}")
             elif key == '_lock':
                 # Reinitialize the lock instead of copying it
                 setattr(result, key, threading.RLock())
@@ -346,7 +341,6 @@ class Mutate(object):
                                                  temp=temp,
                                                  return_prob=1)
             self.Seq_env.playout_dict.update(mutater.m_p_dict)
-            # print(f"\033[93msequence_env_m_p.py 320 move: {move}, move_probs: {move_probs}, play_seqs: {play_seqs}, play_losses: {play_losses}\033[0m")
             # TODO: if the move is 0?
             if move or move == 0:
                 # store the data

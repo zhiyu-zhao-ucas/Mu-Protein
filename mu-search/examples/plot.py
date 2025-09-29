@@ -17,49 +17,47 @@ def cumulative_max_per_round(sequences):
 
 
 def get_latest_csv(directory, name_pattern):
-    """获取指定目录下最新的CSV文件
-    优先使用带时间戳的文件，如果没有则使用最后修改时间"""
-    # 获取目录下所有csv文件
+    """Return the newest CSV file(s) under ``directory`` matching ``name_pattern``.
+
+    Files whose names contain a timestamp take precedence; if none exist, fall back to
+    the most recently modified file."""
+    # Gather all CSV files in the directory
     pattern = os.path.join(directory, "*.csv")
     csv_files = glob.glob(pattern)
     
     if not csv_files:
-        raise FileNotFoundError(f"在 {directory} 目录下没有找到CSV文件")
+        raise FileNotFoundError(f"No CSV files found under {directory}")
     
-    # 尝试找出带有时间戳格式的文件
+    # Attempt to identify files containing a timestamp in their names
     timestamped_files = []
     other_files = []
     
     for file in csv_files:
         try:
-            # 尝试解析文件名中的时间戳
             filename = os.path.basename(file)
             timestamp_str = filename.split('*')[-1].split('.')[0]
             datetime.strptime(timestamp_str, "%Y%m%d_%H%M%S")
-            # print(f"file: {file}, name_pattern: {name_pattern}")
             if name_pattern in file:
                 timestamped_files.append(file)
         except (IndexError, ValueError):
-            # 如果解析失败，将文件添加到其他文件列表
-            # print(f"file: {file}, name_pattern: {name_pattern}")
             if name_pattern in file:
                 other_files.append(file)
     
     if timestamped_files:
-        # 如果有带时间戳的文件，选择时间戳最新的
+        # If timestamped files exist, pick the most recent timestamp
         latest_file = max(timestamped_files, key=lambda x: datetime.strptime(
             os.path.basename(x).split('*')[-1].split('.')[0], 
             "%Y%m%d_%H%M%S"
         ))
-        print("使用带时间戳的最新文件")
+        print("Using newest timestamped file")
         print(latest_file)
     else:
-        # 如果没有带时间戳的文件，使用最后修改时间最新的文件
+        # Otherwise fall back to the file with the latest modification time
         try:
             latest_file = max(other_files, key=os.path.getmtime)
         except:
             print(directory)
-        print("使用最后修改时间最新的文件")
+        print("Using most recently modified file")
         print(latest_file)
     
     return latest_file
