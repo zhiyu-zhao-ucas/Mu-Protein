@@ -164,7 +164,7 @@ class MuformerLandscape(flexs.Landscape):
         args.joint_method = getattr(args, 'joint_method', 'average')
 
         self.device = getattr(args, 'device', 'cuda')
-    self.muformer, self.lm_encoder = load_ckpt(args)
+        self.muformer, self.lm_encoder = load_ckpt(args)
         self.muformer = self.muformer.to(self.device)
         print(f"Muformer model is loaded on the device: {self.device}")
         self.muformer.eval()

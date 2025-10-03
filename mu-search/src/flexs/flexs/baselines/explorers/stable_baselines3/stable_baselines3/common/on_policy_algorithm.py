@@ -341,6 +341,9 @@ class OnPolicyAlgorithm(BaseAlgorithm):
         import time
 
         while self.num_timesteps < total_timesteps:
+            if self.num_timesteps + self.n_steps > total_timesteps:
+                # Avoid going over the limit
+                break
             # for demo
             # sampling_returns = self.collect_rollouts(self.env, callback, self.rollout_buffer, n_rollout_steps=self.n_steps, add_dirichlet_noise=False)
             t0 = time.time()

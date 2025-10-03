@@ -79,7 +79,7 @@ if __name__ == '__main__':
             if args.cnn:
                 # method_list = ['adalead', 'cbas', 'cmaes', 'dynappo', 'BO', 'dirichlet_ppo_cnn', 'dirichlet_ppo_update_starting_sequence_cnn', 'test_cnn']
                 # dirichlet_ppo_list = ['dirichlet_ppo_cnn', 'dirichlet_ppo_update_starting_sequence_cnn', 'test_cnn']
-                method_list = ['adalead', 'cmaes', 'dynappo', 'BO', 'dirichlet_ppo_cnn']
+                method_list = ['adalead', 'cmaes', 'dynappo', 'BO', 'musearch']
                 # method_list = ['adalead', 'cbas', 'cmaes', 'dynappo', 'BO', 'dirichlet_ppo_cnn']
                 dirichlet_ppo_list = ['dirichlet_ppo_cnn']
             else:
@@ -91,15 +91,15 @@ if __name__ == '__main__':
                 if method in dirichlet_ppo_list:
                 # if method in ['dirichlet_ppo', 'dirichlet_ppo_update_starting_sequence', 'test']:
                     if args.cnn:
-                        file_name = get_latest_csv(f'/home/v-zhaozhiyu/code/FLEXS/efficiency/{method}/{landscape}', str(sequences_batch_size)+'_'+str(model_queries_per_batch))
+                        file_name = get_latest_csv(f'efficiency/{method}/{landscape}', str(sequences_batch_size)+'_'+str(model_queries_per_batch))
                         # file_name = f'/home/v-zhaozhiyu/code/FLEXS/efficiency/{method}/{landscape}/{sequences_batch_size}_{model_queries_per_batch}.csv'
                     else:
                         # if method == 'dirichlet_ppo' and landscape == 'rna':
                         #     file_name = f'/home/v-zhaozhiyu/code/FLEXS/efficiency/dirichlet_ppo/rna/100_5000_20250118_094302.csv'
-                        file_name = get_latest_csv(f'/home/v-zhaozhiyu/code/FLEXS/efficiency/{method}/{landscape}', str(sequences_batch_size)+'_'+str(model_queries_per_batch))
+                        file_name = get_latest_csv(f'efficiency/{method}/{landscape}', str(sequences_batch_size)+'_'+str(model_queries_per_batch))
                         # file_name = f'/home/v-zhaozhiyu/code/FLEXS/efficiency/{method}/{landscape}/{sequences_batch_size}_{model_queries_per_batch}_new.csv'
                 else:
-                    file_name = get_latest_csv(f'/home/v-zhaozhiyu/code/FLEXS/efficiency/{method}/{landscape}', str(sequences_batch_size)+'_'+str(model_queries_per_batch))
+                    file_name = get_latest_csv(f'efficiency/{method}/{landscape}', str(sequences_batch_size)+'_'+str(model_queries_per_batch))
                 with open(file_name) as f:
                     metadata = json.loads(next(f))
                     data = pd.read_csv(f)

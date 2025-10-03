@@ -9,7 +9,7 @@ from flexs import baselines
 # @register_algorithm("dirichlet_ppo")
 class MuSearch(flexs.Explorer):
     """ PPO-based Protein Optimization with Dirichlet Sampling. """
-    def __init__(self, args, oracle_model, alphabet, starting_sequence, sequences_batch_size, model_queries_per_batch, rounds, log_file=None, update_frequency=3):
+    def __init__(self, args, oracle_model, alphabet, starting_sequence, sequences_batch_size, model_queries_per_batch, rounds, log_file=None, update_frequency=5):
         model = oracle_model
         name = "MuSearch"
         super().__init__(
@@ -28,6 +28,17 @@ class MuSearch(flexs.Explorer):
         self.num_trajs_per_update = model_queries_per_batch // update_frequency
         self.total_timesteps = model_queries_per_batch * args.horizon
         self.horizon = args.horizon
+        self.env_fn = lambda :LandscapeEnv(self.oracle_model, self.alphabet, self.horizon, self.starting_sequence)
+        self.env = self.env_fn()
+        self.example_env = self.env_fn()
+        self.n_steps= self.horizon * self.num_trajs_per_update
+        self.rl_agent = PPO(["MlpPolicy", "MlpPolicy"], self.env, batch_size=512, verbose=1, n_steps=self.n_steps, for_protein=True, score_threshold=self.score_threshold, tensorboard_log="./logs",
+        policy_kwargs={
+                        'sub_step_observation_spaces1': self.example_env.observation_space1,
+                        'sub_step_observation_spaces2': self.example_env.observation_space2,
+                        'sub_step_action_spaces1': self.example_env.action_space1,
+                        'sub_step_action_spaces2': self.example_env.action_space2,
+                    })
 
     def propose_sequences(self, input_sequences):
         print("-----------------MuSearch-----------------")
@@ -38,27 +49,16 @@ class MuSearch(flexs.Explorer):
         # Set the top sequences as the starting sequences for the PPO
         starting_sequence = input_sequences.sort_values(by="true_score", ascending=False).head(1).sequence.values[0]
         self.starting_sequence = starting_sequence
-        env_fn = lambda :LandscapeEnv(self.oracle_model, self.alphabet, self.horizon, self.starting_sequence)
-        env = env_fn()
-        example_env = env_fn()
-        n_steps= self.horizon * self.num_trajs_per_update
-        rl_agent = PPO(["MlpPolicy", "MlpPolicy"], env, batch_size=512, verbose=1, n_steps=n_steps, for_protein=True, score_threshold=self.score_threshold, tensorboard_log="./logs",
-        policy_kwargs={
-                        'sub_step_observation_spaces1': example_env.observation_space1,
-                        'sub_step_observation_spaces2': example_env.observation_space2,
-                        'sub_step_action_spaces1': example_env.action_space1,
-                        'sub_step_action_spaces2': example_env.action_space2,
-                    })
         print("-----------------MuSearch-----------------")
-        print(f"num_envs", rl_agent.env.num_envs)
-        exploration_candidate_pool, sampling_candidate_pool = rl_agent.learn(self.total_timesteps)
+        print(f"num_envs", self.rl_agent.env.num_envs)
+        exploration_candidate_pool, sampling_candidate_pool = self.rl_agent.learn(self.total_timesteps)
         print("Total sample sequence num: ", len(exploration_candidate_pool))
 
         all_explored_sequences = {}
         filtered_sequences = {}
 
         for arr, score, embedding, ensemble_uncertainty in exploration_candidate_pool:
-            candidate = example_env.array2str(arr)
+            candidate = self.example_env.array2str(arr)
             if score > self.score_threshold:
                 filtered_sequences[candidate] = score
             all_explored_sequences[candidate] = score
