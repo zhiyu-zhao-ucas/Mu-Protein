@@ -305,14 +305,10 @@ class MultiCategoricalDistribution(Distribution):
     :param action_dims: List of sizes of discrete action spaces
     """
 
-    DIRICHLET_MIX_WEIGHT = 0.7
-    DIRICHLET_CONCENTRATION = 0.03
-
     def __init__(self, action_dims: List[int]):
         super().__init__()
         self.action_dims = action_dims
         print("self.action_dims: ", sum(self.action_dims))
-        self._last_dirichlet_probs: Optional[List[th.Tensor]] = None
 
     def proba_distribution_net(self, latent_dim: int) -> nn.Module:
         """
@@ -330,23 +326,21 @@ class MultiCategoricalDistribution(Distribution):
 
     def proba_distribution(self, action_logits: th.Tensor) -> "MultiCategoricalDistribution":
         self.distribution = [Categorical(logits=split) for split in th.split(action_logits, tuple(self.action_dims), dim=1)]
-        self._last_dirichlet_probs = None
         return self
 
     def log_prob(self, actions: th.Tensor, add_dirichlet_noise=True, add_epsilon=False) -> th.Tensor:
         # Extract each discrete action and compute log prob for their respective distributions
         # https://discuss.pytorch.org/t/categorical-distribution-returning-breaking/165343/4
         if add_dirichlet_noise:
+            alpha = 0.50
             logps = []
-            has_cached_probs = self._last_dirichlet_probs is not None and len(self._last_dirichlet_probs) == len(self.distribution)
             for i, (dist, action) in enumerate(zip(self.distribution, th.unbind(actions, dim=1))):
-                if has_cached_probs:
-                    cached_probs = self._last_dirichlet_probs[i]
-                    logp = th.log(th.gather(cached_probs, 1, action.unsqueeze(1)).flatten())
-                else:
-                    alpha = self.DIRICHLET_MIX_WEIGHT
-                    original_probs = th.gather(dist.probs, 1, action.unsqueeze(1)).flatten()  # (k)
-                    logp = th.log(original_probs * alpha + (1 - alpha) / sum(self.action_dims))
+                # print("dist.probs: ", dist.probs.shape)  # (k, 20)
+                # print("action: ", action)
+                # print("action: ", action.shape)  # (k,)
+                # print(action.dtype)
+                original_probs = th.gather(dist.probs, 1, action.unsqueeze(1)).flatten()  # (k)
+                logp = th.log(original_probs * alpha + (1-alpha) / sum(self.action_dims))
                 logps.append(logp)
             return th.stack(logps, dim=1).sum(dim=1)
         else:
@@ -372,32 +366,20 @@ class MultiCategoricalDistribution(Distribution):
     def sample(self, add_dirichlet_noise=True) -> th.Tensor:
         if add_dirichlet_noise:
             assert len(self.distribution) == 1
-            cached_probs: List[th.Tensor] = []
-            sampled_actions: List[th.Tensor] = []
-
             def dirichlet_sample(dist):
-                probs = dist.probs.cpu().detach().numpy()  # shape: (batch, action_dim)
-                alpha = self.DIRICHLET_MIX_WEIGHT
+                probs = dist.probs.cpu().detach().numpy() # shape: (k, 20)
+                # example: probs = np.array([[0.1, 0.2, 0.7], [0.3, 0.3, 0.4]])
+                alpha = 0.75
                 result = []
-                dirichlet_probs = []
-                for row in probs:
-                    noise = np.random.dirichlet(self.DIRICHLET_CONCENTRATION * np.ones_like(row))
-                    mixed_prob = alpha * row + (1 - alpha) * noise
-                    mixed_prob = mixed_prob / np.sum(mixed_prob)
-                    dirichlet_probs.append(mixed_prob)
-                    result.append(np.random.choice(len(row), p=mixed_prob))
-
-                device = dist.probs.device
-                dtype = dist.probs.dtype
-                cached_probs.append(th.tensor(np.stack(dirichlet_probs), device=device, dtype=dtype))
-                sampled_actions.append(th.tensor(result, device=device, dtype=th.long))
-                return sampled_actions[-1]
-
-            sampled = th.stack([dirichlet_sample(dist) for dist in self.distribution], dim=1)
-            self._last_dirichlet_probs = cached_probs
-            return sampled
+                assert len(probs) == 1
+                for i in range(len(probs)):
+                    new_prob = alpha * probs[i,:] + (1-alpha) * np.random.dirichlet(0.03 * np.ones(probs.shape[1]))  # shape: (20,)
+                    new_prob = new_prob / np.sum(new_prob)
+                    result.append(np.random.choice(probs.shape[1], p=new_prob))
+                result = th.tensor(result).cuda()
+                return result
+            return th.stack([dirichlet_sample(dist) for dist in self.distribution], dim=1)
         else:
-            self._last_dirichlet_probs = None
             return th.stack([dist.sample() for dist in self.distribution], dim=1)
 
     def mode(self) -> th.Tensor:
